@@ -38,19 +38,21 @@ while IFS= read -r vm_owner_data; do
   ZONE=$(echo $vm_owner_data | cut -d ':' -f3)
   loc_of_owner=$(cat $SLACK_FILE_NAME | grep "$OWNER" | head -n 1 | cut -d ' ' -f 3)
   STATE=$(gcloud compute instances describe "$VM_NAME" --zone "$ZONE" --project "$PROJECT_ID" --format='value(status)')
+  checkLabelByPass=$(gcloud compute instances describe "$VM_NAME" --zone "$ZONE" --project "$PROJECT_ID" --format='value(labels.auto_shutdown_bypass)')
   echo -e "\nVM Name ==> $VM_NAME, its OWNER ==> $OWNER, its ZONE ==> $ZONE, its STATE ==> $STATE and Location ==> $loc_of_owner...!!"
 
-  if [ -z "$loc_of_owner" ]; then
-    echo "Location is empty. Check the OWNER Name. Current OWNER Label is $OWNER...!!!"
-  else
-    # Set timezone
-    export TZ="$loc_of_owner"
+  if [ -z "$checkLabelByPass" ]; then
+    if [ -z "$loc_of_owner" ]; then
+      echo "Location is empty. Check the OWNER Name. Current OWNER Label is $OWNER...!!!"
+    else
+      # Set timezone
+      export TZ="$loc_of_owner"
 
-    # Get current hour in 24-hour format
-    current_hour=$(date +%H)
+      # Get current hour in 24-hour format
+      current_hour=$(date +%H)
 
-    # Check if current hour is between 8am and 9am for starting the VM and stop the VM between 6pm to 7pm in respective timezones
-    if [ "$current_hour" -ge 8 ] && [ "$current_hour" -lt 9 ]; then
+      # Check if current hour is between 8am and 9am for starting the VM and stop the VM between 6pm to 7pm in respective timezones
+      if [ "$current_hour" -ge 8 ] && [ "$current_hour" -lt 9 ]; then
         echo -e "Current time is between 9am and 6pm in $TZ timezone. Here leave the VM - $VM_NAME in running state or start the VM."
         if [ "$STATE" == "TERMINATED" ]; then
           echo -e "START THE VM $VM_NAME"
@@ -58,9 +60,8 @@ while IFS= read -r vm_owner_data; do
             echo -e "dry_run is false. Hence perform start vm action.."
             gcloud compute instances start "$VM_NAME" --zone "$ZONE" --project $PROJECT_ID
           fi
-          
         fi
-    elif [ "$current_hour" -ge 18 ] && [ "$current_hour" -lt 19 ]; then
+      elif [ "$current_hour" -ge 18 ] && [ "$current_hour" -lt 19 ]; then
         echo -e "Current time is NOT between 9am and 6pm in $TZ timezone. Hence Shutdown the VM - $VM_NAME or keep it in stopped state."
         if [ "$STATE" == "RUNNING" ]; then
           echo -e "STOP THE VM $VM_NAME"
@@ -69,7 +70,10 @@ while IFS= read -r vm_owner_data; do
             gcloud compute instances stop "$VM_NAME" --zone "$ZONE" --project $PROJECT_ID --keep-disks
           fi
         fi
+      fi
     fi
+  else
+    echo -e "Label auto_shutdown_bypass is set to $checkLabelByPass. Hence skipping any check on this VM - $VM_NAME."
   fi
 done < $VM_FILE_NAME
 
