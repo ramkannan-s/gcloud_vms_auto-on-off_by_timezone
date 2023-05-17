@@ -2,14 +2,14 @@ name: VM Shutdown based on TimeZone
 
 on:
   schedule:
-    - cron: "* 2 * * *"
+    - cron: "0 */2 * * *"
   push:
     branches:
       - main
 
 env:
   PROJECT_VAR: soleng-dev
-  DRYRUN_VAR: true
+  DRYRUN_VAR: false
 
 jobs:
   run_script:
