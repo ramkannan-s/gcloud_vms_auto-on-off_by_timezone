@@ -67,7 +67,7 @@ while IFS= read -r vm_owner_data; do
           echo -e "STOP THE VM $VM_NAME"
           if [ "$dry_run" = false ]; then
             echo -e "dry_run is false. Hence perform stop vm action.."
-            gcloud compute instances stop "$VM_NAME" --zone "$ZONE" --project $PROJECT_ID --keep-disks
+            gcloud compute instances stop "$VM_NAME" --zone "$ZONE" --project $PROJECT_ID
           fi
         fi
       fi
