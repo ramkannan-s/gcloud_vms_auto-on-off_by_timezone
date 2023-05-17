@@ -1,5 +1,8 @@
 name: VM Shutdown based on TimeZone
 on:
+  schedule:
+      # Runs "At every minute past hour 2."
+    - cron: "* 2 * * *"
   push:
     branches:
       - main
