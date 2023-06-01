@@ -5,7 +5,7 @@ PROJECT_ID="${1:?please enter Project ID. ex - soleng-dev}"
 
 # Set your Slack API token
 SLACK_TOKEN="${2:?please enter Slack Token ID. ex - xoxb-****}"
-dry_run="${3:?Set dry_run to True or False. ex - xoxb-****}"
+dry_run="${3:?Set dry_run to true or false. ex - true}"
 SLACK_FILE_NAME="slack_data.txt"
 VM_FILE_NAME="vm_list_with_owners.txt"
 
