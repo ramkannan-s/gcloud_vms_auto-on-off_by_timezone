@@ -2,7 +2,7 @@ name: VM Shutdown based on TimeZone
 
 on:
   schedule:
-    - cron: "0 */2 * * 1-5"
+    - cron: "0 */1 * * 1-5"
   push:
     branches:
       - main
@@ -12,10 +12,9 @@ env:
   DRYRUN_VAR: false
 
 jobs:
-  run_script:
+  shutdown_vms_by_timezone:
     runs-on: ubuntu-latest
     
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2       
