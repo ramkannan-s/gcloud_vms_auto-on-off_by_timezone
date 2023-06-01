@@ -1,15 +1,15 @@
-name: VM Shutdown based on TimeZone
+name: ALL VM's Shutdown on Weekends
 
 on:
   schedule:
-    - cron: "0 */2 * * *"
+    - cron: "0 */2 * * 6,0"
   push:
     branches:
       - main
 
 env:
   PROJECT_VAR: soleng-dev
-  DRYRUN_VAR: false
+  DRYRUN_VAR: true
 
 jobs:
   run_script:
@@ -31,6 +31,6 @@ jobs:
       - name: Run Shell Script
         run: |
           echo "Running shell script..."
-          chmod +x vm_shutdown_by_timezone.sh
-          ./vm_shutdown_by_timezone.sh $PROJECT_VAR ${{ secrets.SLACK_TOKEN }} $DRYRUN_VAR
+          chmod +x vm_shutdown_all.sh
+          ./vm_shutdown_all.sh $PROJECT_VAR $DRYRUN_VAR
 
