@@ -9,7 +9,7 @@ on:
 
 env:
   PROJECT_VAR: soleng-dev
-  DRYRUN_VAR: true
+  DRYRUN_VAR: false
 
 jobs:
   shutdown_all_vms:
