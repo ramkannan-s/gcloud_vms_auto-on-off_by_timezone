@@ -58,7 +58,7 @@ while IFS= read -r vm_owner_data; do
           echo -e "START THE VM $VM_NAME"
           if [ "$dry_run" = false ]; then
             echo -e "dry_run is false. Hence perform start vm action.."
-            gcloud compute instances start "$VM_NAME" --zone "$ZONE" --project $PROJECT_ID
+            #gcloud compute instances start "$VM_NAME" --zone "$ZONE" --project $PROJECT_ID
           fi
         fi
       elif [ "$current_hour" -ge 18 ] && [ "$current_hour" -lt 19 ]; then
