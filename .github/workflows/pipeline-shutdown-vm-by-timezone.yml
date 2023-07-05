@@ -27,7 +27,7 @@ jobs:
           export_default_credentials: true
 
 
-      - name: Run Shell Script
+      - name: VM's Shutdown based on TimeZone
         run: |
           echo "Running shell script..."
           chmod +x vm_shutdown_by_timezone.sh

@@ -12,7 +12,7 @@ env:
   DRYRUN_VAR: false
 
 jobs:
-  shutdown_vms_by_timezone:
+  shutdown_sql_db_by_timezone:
     runs-on: ubuntu-latest
     
     steps:
@@ -27,7 +27,7 @@ jobs:
           export_default_credentials: true
 
 
-      - name: Run Shell Script
+      - name: SQL DB's ShutDown Based on TimeZone
         run: |
           echo "Running shell script..."
           chmod +x sql_shutdown_by_timezone.sh
