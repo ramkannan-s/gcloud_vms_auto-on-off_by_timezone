@@ -1,4 +1,4 @@
-name: ALL VM's Shutdown on Weekends
+name: ALL VM's and SQL DB Shutdown on Weekends
 
 on:
   schedule:
@@ -27,9 +27,15 @@ jobs:
           export_default_credentials: true
 
 
-      - name: Run Shell Script
+      - name: Run Shutdown ALL VM's Scripts
         run: |
           echo "Running shell script..."
           chmod +x vm_shutdown_all.sh
           ./vm_shutdown_all.sh $PROJECT_VAR $DRYRUN_VAR
+
+      - name: Run Shutdown ALL SQL DB's Scripts
+        run: |
+          echo "Running shell script..."
+          chmod +x sql_shutdown_all.sh
+          ./sql_shutdown_all.sh $PROJECT_VAR $DRYRUN_VAR
 
