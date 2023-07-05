@@ -1,4 +1,4 @@
-# gcloud_vms_auto-on-off_by_timezone
+# gCloud VM's and SQL's Shutdown Scripts
 
 There are 4 pipelines currently running :-
 1. Shutdown VM's based on TimeZone - Runs every 1 hr on Weekdays.
