@@ -5,9 +5,11 @@ PROJECT_ID="${1:?please enter Project ID. ex - soleng-dev}"
 dry_run="${2:?Set dry_run to true or false. ex - true}"
 VM_FILE_NAME="vm_list_with_owners.txt"
 SQL_FILE_NAME="sql_list_with_owners.txt"
+GKE_FILE_NAME="gke_list_with_owners.txt"
 
 gcloud compute instances list --project $PROJECT_ID --filter='labels!=owner AND labels!=goog-gke-node' --format='value[separator=":"](name,zone)' > $VM_FILE_NAME
 gcloud sql instances list --project $PROJECT_ID --filter='labels!=owner AND labels!=goog-gke-node' --format='value[separator=":"](name)' > $SQL_FILE_NAME
+gcloud container clusters list --project $PROJECT_ID --filter='resourceLabels!=owner' --format='value[separator=":"](name,zone)' > $GKE_FILE_NAME
 
 while IFS= read -r vm_owner_data; do
   VM_NAME=$(echo $vm_owner_data | cut -d ':' -f1)
@@ -24,7 +26,7 @@ while IFS= read -r vm_owner_data; do
 done < $VM_FILE_NAME
 
 while IFS= read -r owner_data; do
-  SQL_NAME=$(echo $owner_data | cut -d ':' -f2)
+  SQL_NAME=$(echo $owner_data | cut -d ':' -f1)
   STATE=$(gcloud sql instances describe "$SQL_NAME" --project "$PROJECT_ID" --format='value(state)')
   echo -e "\nSQL Name ==> $SQL_NAME, its STATE ==> $STATE ..!!"
   if [ "$STATE" == "RUNNABLE" ]; then
@@ -36,7 +38,19 @@ while IFS= read -r owner_data; do
   fi
 done < $SQL_FILE_NAME
 
+while IFS= read -r owner_data; do
+  GKE_NAME=$(echo $owner_data | cut -d ':' -f1)
+  ZONE=$(echo $owner_data | cut -d ':' -f2)
+  echo -e "\nGKE Name ==> $GKE_NAME, its ZONE ==> $ZONE ...!!"
+  echo -e "Resize the GKE Cluster - $GKE_NAME to 0 [Running in DRY_RUN Mode]"
+  if [ "$dry_run" = false ]; then
+    echo -e "DRY_RUN is false. Hence perform Resize GKE Cluster action.."
+    gcloud container clusters resize "$GKE_NAME" --zone "$ZONE" --num-nodes=0 --quiet --project $PROJECT_ID
+  fi
+done < $GKE_FILE_NAME
+
 rm -rf $VM_FILE_NAME
 rm -rf $SQL_FILE_NAME
+rm -rf $GKE_FILE_NAME
 
 ### sample cmd to run - ./vm_shutdown_no_owner.sh soleng-dev true
